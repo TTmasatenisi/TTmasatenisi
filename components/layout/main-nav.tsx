@@ -1,43 +1,60 @@
-// components/layout/main-nav.tsx
-"use client";
+﻿'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
-type Item = { href: string; label: string; exact?: boolean };
+type Orientation = 'horizontal' | 'vertical';
 
-const items: Item[] = [
-  { href: "/public", label: "Keşfet", exact: true },
-  { href: "/dashboard", label: "Kulübüm" },
-  { href: "/admin", label: "Admin" },
+const NAV_ITEMS = [
+  { href: '/public', label: 'Keşfet' },
+  { href: '/dashboard', label: 'Kulübüm' },
+  { href: '/admin', label: 'Admin' },
 ];
 
-export function MainNav({ className }: { className?: string }) {
-  const pathname = usePathname() ?? "/";
+function NavLink({ href, label }: { href: string; label: string }) {
+  const pathname = usePathname();
+  const active =
+    pathname === href ||
+    (href !== '/public' && (pathname?.startsWith(href) ?? false));
 
   return (
-    <nav className={cn("flex items-center gap-4 text-sm", className)}>
-      {items.map((it) => {
-        const isActive = it.exact
-          ? pathname === it.href
-          : pathname === it.href || pathname.startsWith(it.href + "/");
+    <Link
+      href={href}
+      className={cn(
+        'rounded-md px-3 py-2 text-sm font-medium transition',
+        active
+          ? 'bg-primary text-primary-foreground'
+          : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+      )}
+    >
+      {label}
+    </Link>
+  );
+}
 
-        return (
-          <Link
-            key={it.href}
-            href={it.href}
-            aria-current={isActive ? "page" : undefined}
-            className={cn(
-              "rounded-md px-3 py-2 transition-colors",
-              "text-muted-foreground hover:text-foreground hover:bg-muted/60",
-              isActive && "bg-muted text-foreground"
-            )}
-          >
-            {it.label}
-          </Link>
-        );
-      })}
+export function MainNav({
+  orientation = 'horizontal',
+  onNavigate,
+}: {
+  orientation?: Orientation;
+  onNavigate?: () => void;
+}) {
+  const isVertical = orientation === 'vertical';
+
+  return (
+    <nav
+      className={cn(
+        isVertical
+          ? 'flex flex-col gap-1'
+          : 'hidden md:flex items-center gap-1'
+      )}
+    >
+      {NAV_ITEMS.map((item) => (
+        <div key={item.href} onClick={onNavigate}>
+          <NavLink {...item} />
+        </div>
+      ))}
     </nav>
   );
 }
