@@ -1,5 +1,8 @@
-﻿import "../styles/globals.css";
+﻿// app/layout.tsx
+import "./../styles/globals.css";
 import type { Metadata } from "next";
+import { SiteHeader } from "@/components/layout/site-header";
+import { SiteFooter } from "@/components/layout/site-footer";
 
 export const metadata: Metadata = {
   title: "TT MasaTenisi",
@@ -10,7 +13,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="tr" suppressHydrationWarning>
       <body className="min-h-screen bg-background text-foreground antialiased">
-        {children}
+        <SiteHeader />
+        <main className="container mx-auto px-4 py-6">{children}</main>
+        <SiteFooter />
       </body>
     </html>
   );
